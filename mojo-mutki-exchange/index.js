@@ -1,38 +1,60 @@
-function exchanging() {
-  const mojoExchangeCount = [];
+const remainingMutkis = [];
+const mojoExchangeCount = [];
 
+function exchanging(remainingMutkis, mojoExchangeCount) {
   function calculation(mutki) {
-    const mojo = mutki / 3;
+    const exchangedMojo = mutki / 3;
     const remainingMutki = mutki % 3;
-    const exchaningAbleMutkis = (mutki / 3) * 3;
+    const exchangeableMutkis = (mutki / 3) * 3;
 
-    mojoExchangeCount.push(mojo);
+    mojoExchangeCount.push(exchangedMojo);
+    remainingMutkis.push(remainingMutki);
 
     return {
-      mojo,
-      remainingMutki,
-      exchaningAbleMutkis,
-      mojoEatenCount,
+      exchangedMojo: Math.floor(exchangedMojo),
+      remainingMutki: Math.floor(remainingMutki),
+      exchangeableMutkis: Math.floor(exchangeableMutkis),
+      mojoExchangeCount,
+      remainingMutkis,
     };
   }
+
+  return calculation;
 }
+
+const calculation = exchanging(remainingMutkis, mojoExchangeCount);
 
 const mojoMutkiExchange = (mojo) => {
   const mutki = mojo;
 
-  const calculation = exchanging(mutki);
-  
   console.log(`Eat ${mojo} mojos -> Get ${mutki} mutkis!`);
 
-
-  const { exchangedMojo, remainingMutki, exchaningAbleMutkis } =
-    calculation(mojo);
+  const lastRemaining =
+    remainingMutkis?.length > 0
+      ? remainingMutkis[remainingMutkis.length - 1]
+      : 0;
+  console.log(remainingMutkis);
+  const { exchangedMojo, remainingMutki, exchangeableMutkis } = calculation(
+    mojo + lastRemaining
+  );
 
   console.log(
-    `Exchange ${exchaningAbleMutkis} mutkis -> GEt ${exchangedMojo} mojos!`
+    `Exchange ${exchangeableMutkis} mutkis -> GEt ${exchangedMojo} mojos!`
   );
 
   console.log(`Remaining mutkis: ${remainingMutki}`);
+
+  if (exchangedMojo + remainingMutki < 3) {
+    console.log(
+      `Total Mutkis: ${exchangedMojo} + ${remainingMutki} = ${
+        exchangedMojo + remainingMutki
+      } (not enough to exchange anymore)`
+    );
+
+    return;
+  }
+
+  mojoMutkiExchange(exchangedMojo);
 };
 
-mojoMutkiExchange(10);
+mojoMutkiExchange(100);
