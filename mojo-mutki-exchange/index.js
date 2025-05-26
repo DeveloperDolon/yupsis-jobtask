@@ -39,7 +39,7 @@ const mojoMutkiExchange = (mojo) => {
   );
 
   console.log(
-    `Exchange ${exchangeableMutkis} mutkis -> GEt ${exchangedMojo} mojos!`
+    `Exchange ${exchangeableMutkis} mutkis -> GET ${exchangedMojo} mojos!`
   );
 
   console.log(`Remaining mutkis: ${remainingMutki}`);
@@ -61,7 +61,7 @@ const mojoCountSum = (mojoExchangeCount) => {
     return mojoExchangeCount.reduce((sum, current) => sum + current, 0);
 }
 
-const initialMojo = 100;
+const initialMojo = 10;
 
 mojoMutkiExchange(initialMojo);
 
