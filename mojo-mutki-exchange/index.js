@@ -7,12 +7,12 @@ function exchanging(remainingMutkis, mojoExchangeCount) {
     const remainingMutki = mutki % 3;
     const exchangeableMutkis = (mutki / 3) * 3;
 
-    mojoExchangeCount.push(exchangedMojo);
-    remainingMutkis.push(remainingMutki);
+    mojoExchangeCount.push(Math.floor(exchangedMojo));
+    remainingMutkis.push(Math.floor(remainingMutki));
 
     return {
-      exchangedMojo: Math.floor(exchangedMojo),
-      remainingMutki: Math.floor(remainingMutki),
+      exchangedMojo: exchangedMojo,
+      remainingMutki: remainingMutki,
       exchangeableMutkis: Math.floor(exchangeableMutkis),
       mojoExchangeCount,
       remainingMutkis,
@@ -57,4 +57,15 @@ const mojoMutkiExchange = (mojo) => {
   mojoMutkiExchange(exchangedMojo);
 };
 
-mojoMutkiExchange(100);
+const mojoCountSum = (mojoExchangeCount) => {
+    return mojoExchangeCount.reduce((sum, current) => sum + current, 0);
+}
+
+const initialMojo = 100;
+
+mojoMutkiExchange(initialMojo);
+
+console.log(`Initial mojo: ${initialMojo}`);
+console.log(`From exchanges: ${mojoExchangeCount.join(' + ')} = ${mojoCountSum(mojoExchangeCount)}`);
+console.log(`Total: ${mojoCountSum(mojoExchangeCount) + initialMojo}`);
+
