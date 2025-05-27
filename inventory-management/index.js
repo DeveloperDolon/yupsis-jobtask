@@ -1,8 +1,42 @@
+function updateStock(currentStock, transaction, action) {
+  const currentMg =
+    currentStock.tons * 1000000000 +
+    currentStock.kilograms * 1000000 +
+    currentStock.grams * 1000 +
+    currentStock.milligrams;
 
-const initial_stock = {tons: 1, kilogram: 0, grams: 0, milligrams: 0};
+  const transactionMg =
+    transaction.tons * 1000000000 +
+    transaction.kilograms * 1000000 +
+    transaction.grams * 1000 +
+    transaction.milligrams;
 
-const update_stock = (stock, type) => {
-    console.log(stock);
+  let newMg;
+  if (action === "purchase") {
+    newMg = currentMg + transactionMg;
+  } else if (action === "sell") {
+    newMg = currentMg - transactionMg;
+  } else {
+    throw new Error("Action must be either 'purchase' or 'sell'");
+  }
+
+  if (newMg < 0) {
+    throw new Error("Resulting stock cannot be negative");
+  }
+
+  const tons = Math.floor(newMg / 1000000000);
+  let remaining = newMg % 1000000000;
+
+  const kilograms = Math.floor(remaining / 1000000);
+  remaining = remaining % 1000000;
+
+  const grams = Math.floor(remaining / 1000);
+  const milligrams = remaining % 1000;
+
+  return {
+    tons: tons,
+    kilograms: kilograms,
+    grams: grams,
+    milligrams: milligrams,
+  };
 }
-
-update_stock(initial_stock, 'sell');
