@@ -40,3 +40,19 @@ function updateStock(currentStock, transaction, action) {
     milligrams: milligrams,
   };
 }
+
+const initialStock = { tons: 1, kilograms: 0, grams: 0, milligrams: 0 };
+
+const afterSale = updateStock(
+  initialStock,
+  { tons: 0, kilograms: 0, grams: 1, milligrams: 0 },
+  "sell"
+);
+console.log(afterSale);
+
+const afterPurchase = updateStock(
+  afterSale,
+  { tons: 0, kilograms: 0, grams: 1001, milligrams: 0 },
+  "purchase"
+);
+console.log(afterPurchase);
