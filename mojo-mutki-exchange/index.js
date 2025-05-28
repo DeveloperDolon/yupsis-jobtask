@@ -11,8 +11,8 @@ function exchanging(remainingMutkis, mojoExchangeCount) {
     remainingMutkis.push(Math.floor(remainingMutki));
 
     return {
-      exchangedMojo: exchangedMojo,
-      remainingMutki: remainingMutki,
+      exchangedMojo: Math.floor(exchangedMojo),
+      remainingMutki: Math.floor(remainingMutki),
       exchangeableMutkis: Math.floor(exchangeableMutkis),
       mojoExchangeCount,
       remainingMutkis,
