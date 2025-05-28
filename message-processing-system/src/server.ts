@@ -3,6 +3,7 @@ import { Server as SocketServer } from 'socket.io';
 import mongoose from 'mongoose';
 import config from './app/config';
 import app from './app';
+import { start } from 'repl';
 
 let server: Server | undefined;
 
@@ -19,22 +20,8 @@ async function main() {
       },
     });
 
-    io.on('connection', (socket) => {
-      console.log('New client connected:', socket.id);
-
-      socket.on('message', (data) => {
-        console.log(data);
-        
-      });
-
-      socket.emit('message', 'Welcome to the socket server!');
-
-      socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-      });
-    });
-
-    httpServer.listen(config.port, () => {
+    httpServer.listen(config.port, async () => {
+      await start();
       console.log(`Server is running on port ${config.port}`);
     });
 

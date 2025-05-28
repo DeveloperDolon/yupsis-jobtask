@@ -1,6 +1,6 @@
 import amqp from 'amqplib';
-import { RabbitMQ } from "../../config/rabbitMq";
-import { IPayment } from "./payment.interface";
+import { RabbitMQ } from '../../config/rabbitMq';
+import { IPayment } from './payment.interface';
 import { Payment } from './payment.model';
 
 export function netfeeCustomerRecharge(payment: IPayment): void {
@@ -18,7 +18,7 @@ export function getRetryDelay(attemptCount: number): number {
     5: 30 * 60 * 1000,
   };
 
-  return delays[attemptCount] || 60 * 60 * 1000; 
+  return delays[attemptCount] || 60 * 60 * 1000;
 }
 
 export async function processPaymentMessage(
@@ -62,7 +62,6 @@ export async function processPaymentMessage(
 
       await payment.save();
 
-      
       if (delay > 0) {
         channel.sendToQueue(
           RabbitMQ.RETRY_QUEUE_NAME,
@@ -78,16 +77,14 @@ export async function processPaymentMessage(
     }
   } catch (error) {
     console.error('Error processing payment:', error);
-    channel.nack(msg); 
+    channel.nack(msg);
   }
 }
-
 
 export async function start(): Promise<void> {
   await RabbitMQ.connect();
   const channel = RabbitMQ.getChannel();
 
-  
   channel.consume(RabbitMQ.QUEUE_NAME, processPaymentMessage, { noAck: false });
 
   console.log('Payment processor started and waiting for messages...');
