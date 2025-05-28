@@ -5,6 +5,7 @@ import config from './app/config';
 import app from './app';
 import { start } from 'repl';
 import { RabbitMQ } from './app/config/rabbitMq';
+import { initialize } from './app/utiils/dataGenerator';
 
 let server: Server | undefined;
 
@@ -22,8 +23,8 @@ async function main() {
     });
 
     httpServer.listen(config.port, async () => {
-      await start();
       console.log(`Server is running on port ${config.port}`);
+      await start();
     });
 
     return httpServer;
@@ -35,6 +36,7 @@ async function main() {
 main().then((httpServer) => {
   server = httpServer;
 });
+initialize().catch(console.error);
 
 process.on('unhandledRejection', (error) => {
   console.log('unhandledRejection is detected, shutting down...', error);
