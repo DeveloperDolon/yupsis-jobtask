@@ -31,4 +31,14 @@ const addPayment = catchAsync(async (req, res) => {
   }
 });
 
-export const PaymentController = { addPayment };
+const payments = catchAsync(async (req, res) => {
+  const payments = await Payment.find().sort({ createdAt: 1 });
+  return sendResponse(res, {
+    success: true,
+    message: 'Payment list successful!',
+    statusCode: 201,
+    data: payments,
+  });
+});
+
+export const PaymentController = { addPayment, payments };
