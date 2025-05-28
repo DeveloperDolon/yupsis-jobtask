@@ -49,12 +49,12 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
-// process.on('uncaughtException', (error) => {
-//   console.log('uncaughtException is detected, shutting down...', error);
-//   if (server) {
-//     server.close(() => {
-//       console.log('Server is closed');
-//       process.exit(1);
-//     });
-//   }
-// });
+process.on('uncaughtException', (error) => {
+  console.log('uncaughtException is detected, shutting down...', error);
+  if (server) {
+    server.close(() => {
+      console.log('Server is closed');
+      process.exit(1);
+    });
+  }
+});

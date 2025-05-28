@@ -28,6 +28,7 @@ export async function processPaymentMessage(
 
   const channel = RabbitMQ.getChannel();
   const paymentId = msg.content.toString();
+  let acknowledged = false;
 
   try {
     const payment = await Payment.findById(paymentId);
@@ -35,6 +36,7 @@ export async function processPaymentMessage(
     if (!payment) {
       console.log(`Payment ${paymentId} not found`);
       channel.ack(msg);
+      acknowledged = true;
       return;
     }
 
@@ -51,7 +53,6 @@ export async function processPaymentMessage(
 
       netfeeCustomerRecharge(payment);
       console.log(`Payment ${payment.trxId} processed successfully!`);
-      channel.ack(msg);
     } else {
       payment.attemptCount += 1;
       payment.status = 'rejected';
@@ -66,25 +67,38 @@ export async function processPaymentMessage(
         channel.sendToQueue(
           RabbitMQ.RETRY_QUEUE_NAME,
           Buffer.from(payment._id.toString()),
-          { expiration: delay.toString() },
+          {
+            expiration: delay.toString(),
+            persistent: true,
+          },
         );
       }
 
       console.log(
         `Payment ${payment.trxId} rejected. Next attempt in ${delay / 1000} seconds`,
       );
-      channel.ack(msg);
     }
+
+    // ✅ Always ack at the end of try block
+    channel.ack(msg);
+    acknowledged = true;
   } catch (error) {
     console.error('Error processing payment:', error);
-    channel.nack(msg);
+    if (!acknowledged) {
+      try {
+        channel.nack(msg);
+      } catch (nackError) {
+        console.error('Failed to nack message:', nackError);
+      }
+    }
   }
 }
 
+
 export async function start(): Promise<void> {
   await RabbitMQ.connect();
-  
   const channel = RabbitMQ.getChannel();
+  channel.prefetch(1);
 
   channel.consume(RabbitMQ.QUEUE_NAME, processPaymentMessage, { noAck: false });
 

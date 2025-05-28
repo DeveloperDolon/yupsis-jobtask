@@ -1,9 +1,9 @@
-import amqp from 'amqplib';
+import * as amqp from 'amqplib';
 import type { Connection, Channel } from 'amqplib';
 
 export class RabbitMQ {
-  private static connection: amqp.Connection | null = null;
-  private static channel: amqp.Channel | null = null;
+  private static connection: Connection | null = null;
+  private static channel: Channel | null = null;
 
   public static readonly QUEUE_NAME = 'payment_processing';
   public static readonly RETRY_QUEUE_NAME = 'payment_retry';
@@ -11,18 +11,15 @@ export class RabbitMQ {
   public static async connect(): Promise<void> {
     try {
       this.connection = await amqp.connect('amqp://localhost');
+
       if (!this.connection) {
-        throw new Error('Failed to create RabbitMQ connection');
+        throw new Error('Failed to establish RabbitMQ connection');
       }
-
       this.channel = await this.connection.createChannel();
-      if (!this.channel) {
-        throw new Error('Failed to create RabbitMQ channel');
-      }
 
-      await this.channel.assertQueue(this.QUEUE_NAME, { durable: true });
+      await this.channel!.assertQueue(this.QUEUE_NAME, { durable: true });
 
-      await this.channel.assertQueue(this.RETRY_QUEUE_NAME, {
+      await this.channel!.assertQueue(this.RETRY_QUEUE_NAME, {
         durable: true,
         deadLetterExchange: '',
         deadLetterRoutingKey: this.QUEUE_NAME,
