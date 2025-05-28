@@ -22,6 +22,8 @@ async function main() {
       },
     });
 
+    await initialize().catch(console.error);
+
     httpServer.listen(config.port, async () => {
       console.log(`Server is running on port ${config.port}`);
       await start();
@@ -36,7 +38,6 @@ async function main() {
 main().then((httpServer) => {
   server = httpServer;
 });
-initialize().catch(console.error);
 
 process.on('unhandledRejection', (error) => {
   console.log('unhandledRejection is detected, shutting down...', error);
