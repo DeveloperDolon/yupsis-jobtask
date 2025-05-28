@@ -1,7 +1,7 @@
 import amqp from 'amqplib';
 import { RabbitMQ } from "../../config/rabbitMq";
 import { IPayment } from "./payment.interface";
-import { Payment } from './payment.controller';
+import { Payment } from './payment.model';
 
 export function netfeeCustomerRecharge(payment: IPayment): void {
   console.log(

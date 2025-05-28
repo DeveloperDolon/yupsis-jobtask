@@ -1,21 +1,34 @@
-import { Model, model, Schema } from 'mongoose';
-import { IPayment } from './payment.interface';
+import { RabbitMQ } from '../../config/rabbitMq';
+import catchAsync from '../../utiils/catchAsync';
+import sendResponse from '../../utiils/sendResponse';
+import { Payment } from './payment.model';
 
-const paymentSchema = new Schema<IPayment>({
-  trxId: { type: Number, required: true },
-  amount: { type: Number, required: true },
-  status: {
-    type: String,
-    enum: ['pending', 'success', 'rejected'],
-    default: 'pending',
-  },
-  attemptCount: { type: Number, default: 0 },
-  nextAttemptAt: { type: Date },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+const addPayment = catchAsync(async (req, res) => {
+  try {
+    const { trxId, amount } = req.body;
+    const payment = new Payment({ trxId, amount });
+    await payment.save();
+
+    const channel = RabbitMQ.getChannel();
+    channel.sendToQueue(
+      RabbitMQ.QUEUE_NAME,
+      Buffer.from(payment._id.toString()),
+    );
+
+    return sendResponse(res, {
+      success: true,
+      message: 'Payment added successful!',
+      statusCode: 201,
+      data: payment,
+    });
+  } catch (error) {
+    return sendResponse(res, {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      statusCode: 400,
+      data: {},
+    });
+  }
 });
 
-export const Payment: Model<IPayment> = model<IPayment>(
-  'Payment',
-  paymentSchema,
-);
+export const PaymentController = { addPayment };
