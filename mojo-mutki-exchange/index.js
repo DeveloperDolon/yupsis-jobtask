@@ -33,7 +33,7 @@ const mojoMutkiExchange = (mojo) => {
     remainingMutkis?.length > 0
       ? remainingMutkis[remainingMutkis.length - 1]
       : 0;
-  console.log(remainingMutkis);
+  
   const { exchangedMojo, remainingMutki, exchangeableMutkis } = calculation(
     mojo + lastRemaining
   );
