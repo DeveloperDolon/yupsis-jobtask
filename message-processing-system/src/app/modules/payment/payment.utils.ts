@@ -83,6 +83,7 @@ export async function processPaymentMessage(
 
 export async function start(): Promise<void> {
   await RabbitMQ.connect();
+  
   const channel = RabbitMQ.getChannel();
 
   channel.consume(RabbitMQ.QUEUE_NAME, processPaymentMessage, { noAck: false });
