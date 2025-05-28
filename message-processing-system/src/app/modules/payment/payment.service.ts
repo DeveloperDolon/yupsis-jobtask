@@ -1,14 +1,15 @@
 import amqp from 'amqplib';
 import { RabbitMQ } from "../../config/rabbitMq";
 import { IPayment } from "./payment.interface";
+import { Payment } from './payment.controller';
 
-function netfeeCustomerRecharge(payment: IPayment): void {
+export function netfeeCustomerRecharge(payment: IPayment): void {
   console.log(
     `Processing successful payment: ${payment.trxId}, Amount: ${payment.amount}`,
   );
 }
 
-function getRetryDelay(attemptCount: number): number {
+export function getRetryDelay(attemptCount: number): number {
   const delays: Record<number, number> = {
     1: 2 * 60 * 1000,
     2: 5 * 60 * 1000,
@@ -20,7 +21,7 @@ function getRetryDelay(attemptCount: number): number {
   return delays[attemptCount] || 60 * 60 * 1000; 
 }
 
-async function processPaymentMessage(
+export async function processPaymentMessage(
   msg: amqp.ConsumeMessage | null,
 ): Promise<void> {
   if (!msg) return;
@@ -82,7 +83,7 @@ async function processPaymentMessage(
 }
 
 
-async function start(): Promise<void> {
+export async function start(): Promise<void> {
   await RabbitMQ.connect();
   const channel = RabbitMQ.getChannel();
 
