@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import config from './app/config';
 import app from './app';
 import { start } from 'repl';
+import { RabbitMQ } from './app/config/rabbitMq';
 
 let server: Server | undefined;
 
@@ -43,6 +44,12 @@ process.on('unhandledRejection', (error) => {
       process.exit(1);
     });
   }
+});
+
+process.on('SIGINT', async () => {
+  await RabbitMQ.close();
+  await mongoose.connection.close();
+  process.exit(0);
 });
 
 process.on('uncaughtException', (error) => {
